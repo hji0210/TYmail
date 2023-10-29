@@ -1,0 +1,145 @@
+/*--------------------------------------------------------------
+# Member
+--------------------------------------------------------------*/
+
+.member .member-form {
+  width: 100%;
+  background: #fff;
+}
+
+.member .member-form .form-group {
+  padding-bottom: 8px;
+}
+
+.member .member-form input,
+.member .member-form textarea {
+  border-radius: 0;
+  box-shadow: none;
+  font-size: 14px;
+  border-radius: 4px;
+}
+
+.member .member-form input:focus,
+.member .member-form textarea:focus {
+  border-color: #d9232d;
+}
+
+.member .member-form input {
+  height: 44px;
+}
+
+.member .member-form textarea {
+  padding: 10px 12px;
+}
+
+.member .member-form button[type=submit],
+.member .member-form button[type=button] {
+  background: #d9232d;
+  border: 0;
+  padding: 10px 24px;
+  color: #fff;
+  transition: 0.4s;
+  border-radius: 4px;
+}
+
+.member .member-form button[type=submit]:hover {
+  background: #e24d55;
+}
+
+@keyframes animate-loading {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.btn-block {
+    display: block;
+    width: 100%
+}
+
+.btn-block+.btn-block {
+    margin-top: .5rem
+}
+
+input[type=button].btn-block,
+input[type=reset].btn-block,
+input[type=submit].btn-block {
+    width: 100%
+}
+
+/*----- id/pw 찾기 버튼 -----*/
+.unselect {
+  background: #d9232d;
+  border: 0;
+  padding: 10px 24px;
+  color: #fff;
+  transition: 0.4s;
+  border-radius: 4px;
+}
+.unselect:hover {
+  background: #e24d55;
+}
+.selected {
+	--bs-btn-color: #dc3545;
+    --bs-btn-border-color: #dc3545;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: rgb(233, 126, 137);
+    --bs-btn-hover-border-color: #dc3545;
+    --bs-btn-focus-shadow-rgb: 220, 53, 69;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #dc3545;
+    --bs-btn-active-border-color: #dc3545;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #dc3545;
+    --bs-btn-disabled-bg: transparent;
+    --bs-btn-disabled-border-color: #dc3545;
+    --bs-gradient: none
+}
+/*----- 로그인 / 회원가입 페이지 이동 버튼 -----*/
+.member-button button[type=button] {
+  background: #515d6a;
+  border: 0;
+  padding: 10px 24px;
+  color: #fff;
+  transition: 0.4s;
+  border-radius: 4px;
+}
+.member-button button[type=button]:hover {
+  background: #717d8a;
+}
+
+/*===== 비밀번호 보이기 버튼 =====*/
+.member-form .inputPassword {
+	position: relative;
+}
+.inputPassword .bi {
+	position: absolute;
+	top: 7px;
+	right: 8px;
+	font-size: 20px;
+	cursor: pointer;
+}
+.inputPassword .bi-eye-fill:hover::before {
+	content: "\F341";
+}
+.inputPassword .bi-eye-slash-fill:hover::before {
+	content: "\F340";
+}
+
+/* ===== 마이페이지 ===== */
+.mypage-index .mypage-button i {
+	font-size: 2rem;
+}
+.mypage-index .mypage-button span {
+	font-size: 1.5rem;
+}
+.mypage-index #mypage-update:hover i::before {
+	content: "\F8A7";
+}
+.mypage-index #mypage-delete:hover i::before {
+	content: "\F4D9";
+}

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.like.mapper.LikeMapper">
+
+    <resultMap type="com.example.demo.receive.DTO.ReceiveResponseDTO" id="receiveMap">
+        <id column="NO" property="no"/>
+        <result column="RECEIVE_ID" property="id"/>
+        <result column="SEND_NAME" property="sendName"/>
+        <result column="SEND_EMAIL" property="sendEmail"/>
+        <result column="TITLE" property="title"/>
+        <result column="CONTENT" property="content"/>
+        <result column="FILE_PATH" property="filePath"/>
+        <result column="LIKE_CHECKED" property="likeChecked"/>
+        <result column="READ_STATUS" property="readStatus"/>
+        <result column="TRASH" property="trash"/>
+        <result column="RECEIVE_DATE" property="createAt"/>
+    </resultMap>
+
+    <!-- 즐겨찾기 (내림차순) -->
+    <select id="selectAllByLike" resultMap="receiveMap">
+        select
+        NO,
+        RECEIVE_ID,
+        SEND_NAME,
+        SEND_EMAIL,
+        TITLE,
+        CONTENT,
+        FILE_PATH,
+        LIKE_CHECKED,
+        READ_STATUS,
+        TRASH,
+        RECEIVE_DATE
+        from
+        RECEIVE
+        where RECEIVE_ID = #{id}
+        and TRASH IS NULL
+        and LIKE_CHECKED = 'Y'
+        order by RECEIVE_DATE desc
+    </select>
+
+    <!-- 메일 세부 사항 -->
+    <select id="getAdditionDetail" resultMap="receiveMap">
+        select
+        NO,
+        RECEIVE_ID,
+        SEND_NAME,
+        SEND_EMAIL,
+        TITLE,
+        CONTENT,
+        FILE_PATH,
+        LIKE_CHECKED,
+        READ_STATUS,
+        TRASH,
+        RECEIVE_DATE
+        from
+        RECEIVE
+        where NO = #{no}
+    </select>
+
+    <!-- 삭제 (휴지통으로 이동) -->
+    <update id="deleteItemInLike" parameterType="string">
+        update RECEIVE
+        set TRASH = #{trash}
+        where NO = #{no}
+    </update>
+
+</mapper>

@@ -1,0 +1,125 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.example.demo.MailMapper">
+
+<!-- ============ insert ============ -->
+    <insert id="insertMail" parameterType="map">  
+    	insert into send (no, send_id, receive_email, title, like_checked, content, send_date, file_path)
+    	values(#{no}, #{send_id}, #{receive_email}, #{title}, 'N', #{content}, #{date}, #{file_path})
+    </insert>
+    
+    <insert id="insertReceiveMail" parameterType="map">  
+    	insert into receive (no, receive_id, send_name, send_email, title, content, like_checked, read_status, receive_date, file_path)
+    	values(#{no}, #{receive_email}, #{send_id}, #{send_id}, #{title}, #{content}, 'N', 'N', #{date}, #{file_path})
+    </insert>
+    
+    <insert id="insertStorageMail" parameterType="map">  
+    	insert into storage (storage_no, send_id, receive_email, title, content, storage_date, file_path)
+    	values(#{storage_no}, #{send_id}, #{receive_email}, #{title}, #{content}, #{storage_date}, #{file_path})
+    </insert>
+    
+    <insert id="insertAddress" parameterType="map">  
+    	insert into contact (name, contact_email, id, no)
+    	values(#{name}, #{contact_email}, #{id}, #{no})
+    </insert>
+    
+    
+<!--  ============ select ============ -->
+    <select id="selectAddress" resultType="com.example.demo.ContactDTO"> 
+    	select	name, contact_email, no
+    	from 	contact
+    	where 	id=#{send_id}
+    	order by name desc
+    </select>
+    
+        <select id="selectMaxAddress" resultType="string"> 
+    	select	max(no)
+    	from 	contact
+    	where 	id=#{send_id}
+    </select>
+    
+    <select id="selectSearchAddress" parameterType="map" resultType="com.example.demo.ContactDTO"> 
+    	select	name, contact_email
+    	from 	contact
+    	where	id=#{id} and ${search_option} like '%${search_content}%'
+    </select>
+    
+    <select id="selectMail" resultType="com.example.demo.MailDTO"> 
+    	select	no, receive_email, title, send_date, like_checked, file_path
+    	from 	send
+    	where	trash is null and send_id=#{send_id}
+    	order by send_date desc
+    </select>
+    
+    <select id="selectSearchMail" parameterType="map" resultType="com.example.demo.MailDTO"> 
+    	select	no, receive_email, title, send_date, like_checked
+    	from 	send
+    	where	trash is null and send_id=#{send_id} and ${search_option} like '%${search_content}%'
+    	order by send_date desc
+    </select>
+    
+    <select id="selectStorageMail" resultType="com.example.demo.StorageDTO"> 
+    	select	storage_no, receive_email, title, content, storage_date, file_path
+    	from 	storage
+    	where	send_id=#{send_id}
+    	order by storage_date desc
+    </select>
+    
+    <select id="selectSearchStorage" parameterType="map" resultType="com.example.demo.StorageDTO"> 
+    	select	storage_no, receive_email, title, content, storage_date, file_path
+    	from 	storage
+    	where	send_id=#{send_id} and ${search_option} like '%${search_content}%'
+    	order by storage_date desc
+    </select>
+    
+    <select id="selectContent" parameterType="string" resultType="com.example.demo.MailDTO"> 
+    	select	no, send_id, receive_email, title, content, send_date, file_path, like_checked
+    	from 	send
+    	where	no=#{no}
+    </select>
+   
+    
+<!-- ============ delete ============ -->
+    <delete id="deleteStorage" parameterType="string"> 
+    	delete from storage
+    	where storage_no = #{storage_no}
+    </delete>
+
+	<update id="deleteMail" parameterType="map"> 
+    	update send
+    	set    trash=#{trash}
+    	where  no = #{no}
+    </update>
+    
+    <delete id="deleteStorageList" parameterType="string"> 
+    	delete from storage
+    	where  storage_no = #{no}
+    </delete>
+    
+	<update id="deleteContact" parameterType="string"> 
+    	delete from contact
+    	where no = #{no}
+    </update>
+    
+<!-- ============ update ============ -->
+	<update id="likeMail" parameterType="string"> 
+    	update send
+    	set	   like_checked = 'Y'
+    	where  no = #{no}
+    </update>
+    
+    <update id="likeMailStatus" parameterType="map"> 
+    	update send
+    	set	   like_checked = #{like_checked}
+    	where  no = #{no}
+    </update>
+    
+    <update id="storageAgain" parameterType="map"> 
+    	update storage
+    	set	   content=#{content, jdbcType=VARCHAR}, receive_email=#{receive_email, jdbcType=VARCHAR}, title=#{title, jdbcType=VARCHAR}, storage_date=#{storage_date, jdbcType=VARCHAR}
+    	where  storage_no=#{storage_no, jdbcType=VARCHAR}
+    </update>
+    
+</mapper>

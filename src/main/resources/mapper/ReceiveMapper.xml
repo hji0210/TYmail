@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.receive.mapper.ReceiveMapper">
+
+    <resultMap type="com.example.demo.receive.DTO.ReceiveResponseDTO" id="receiveMap">
+        <id column="NO" property="no"/>
+        <result column="RECEIVE_ID" property="id"/>
+        <result column="SEND_NAME" property="sendName"/>
+        <result column="SEND_EMAIL" property="sendEmail"/>
+        <result column="TITLE" property="title"/>
+        <result column="CONTENT" property="content"/>
+        <result column="FILE_PATH" property="filePath"/>
+        <result column="LIKE_CHECKED" property="likeChecked"/>
+        <result column="READ_STATUS" property="readStatus"/>
+        <result column="TRASH" property="trash"/>
+        <result column="RECEIVE_DATE" property="createAt"/>
+    </resultMap>
+
+    <insert id="saveReceiveMail" parameterType="com.example.demo.receive.DTO.ReceiveResponseDTO">
+        insert into RECEIVE(NO, RECEIVE_ID, SEND_NAME, SEND_EMAIL, TITLE, CONTENT, FILE_PATH, LIKE_CHECKED, READ_STATUS, TRASH, RECEIVE_DATE)
+        values(#{no}, #{id}, #{sendName}, #{sendEmail}, #{title}, #{content}, #{filePath}, 'N', 'N', #{trash}, #{createAt})
+    </insert>
+
+    <!-- 받은메일함(내림차순) -->
+    <select id="getReceiveMailListById" resultMap="receiveMap">
+        select
+        NO,
+        RECEIVE_ID,
+        SEND_NAME,
+        SEND_EMAIL,
+        TITLE,
+        CONTENT,
+        FILE_PATH,
+        LIKE_CHECKED,
+        READ_STATUS,
+        TRASH,
+        RECEIVE_DATE
+        from
+        RECEIVE
+        where RECEIVE_ID = #{id}
+        and TRASH IS NULL
+    </select>
+
+    <!-- paging_게시물 총개수(받은메일함) -->
+    <select id="count" resultType="int">
+        select
+        count(NO)
+        from RECEIVE
+        where RECEIVE_ID = #{id}
+        and TRASH IS NULL
+    </select>
+    
+    <select id="selectSearchMail" parameterType="map" resultMap="receiveMap"> 
+       select
+       NO,
+        RECEIVE_ID,
+        SEND_NAME,
+        SEND_EMAIL,
+        TITLE,
+        CONTENT,
+        FILE_PATH,
+        LIKE_CHECKED,
+        READ_STATUS,
+        TRASH,
+        RECEIVE_DATE
+        from
+        RECEIVE
+       where trash is null and receive_id=#{id} and ${search_option} like '%${search_content}%'
+       order by RECEIVE_DATE desc
+    </select>
+
+    <!-- paging_받은메일함(내림차순) -->
+    <select id="getReceiveMailListPageById" resultMap="receiveMap">
+        select *
+        from (
+        SELECT NO,
+        RECEIVE_ID,
+        SEND_NAME,
+        SEND_EMAIL,
+        TITLE,
+        CONTENT,
+        FILE_PATH,
+        LIKE_CHECKED,
+        READ_STATUS,
+        TRASH,
+        RECEIVE_DATE,
+        ROWNUM as RN
+            from (
+            SELECT NO,
+            RECEIVE_ID,
+            SEND_NAME,
+            SEND_EMAIL,
+            TITLE,
+            CONTENT,
+            FILE_PATH,
+            LIKE_CHECKED,
+            READ_STATUS,
+            TRASH,
+            RECEIVE_DATE
+            from RECEIVE
+            where RECEIVE_ID = #{id}
+            and TRASH IS NULL
+            order by RECEIVE_DATE DESC
+            )
+        )
+        where RN between #{firstRow} and #{lastRow}
+
+    </select>
+
+    <select id="getReceiveMailListByFilter" resultMap="receiveMap">
+        select
+        NO,
+        RECEIVE_ID,
+        SEND_NAME,
+        SEND_EMAIL,
+        TITLE,
+        CONTENT,
+        FILE_PATH,
+        LIKE_CHECKED,
+        READ_STATUS,
+        TRASH,
+        RECEIVE_DATE
+        from
+        RECEIVE
+        where RECEIVE_ID = #{id}
+        and TRASH IS NULL
+
+        <!-- 필터 : 모든 메일 -->
+        <if test="filter == 'all'">
+        </if>
+
+        <!-- 필터 : 안읽은 메일 -->
+        <if test="filter == 'unread'">
+            and	READ_STATUS = 'N'
+        </if>
+
+        <!-- 필터 : 중요 메일 -->
+        <if test="filter == 'mark'">
+            and	LIKE_CHECKED = 'Y'
+        </if>
+
+        <!-- 필터 : 첨부 메일 -->
+        <if test="filter == 'attach'">
+            and	FILE_PATH IS NOT NULL
+        </if>
+
+        <!-- 필터 : 나에게 온 메일 -->
+        <if test="filter == 'tome'">
+            AND SEND_EMAIL LIKE CONCAT('${id}%', '%@tymail.com')
+        </if>
+
+    </select>
+
+    <!-- 메일 세부 사항 -->
+    <select id="getReceiveMailDetail" resultMap="receiveMap">
+        select
+        NO,
+        RECEIVE_ID,
+        SEND_NAME,
+        SEND_EMAIL,
+        TITLE,
+        CONTENT,
+        FILE_PATH,
+        LIKE_CHECKED,
+        READ_STATUS,
+        TRASH,
+        RECEIVE_DATE
+        from
+        RECEIVE
+        where NO = #{no}
+    </select>
+
+    <!-- 중요 메일 업데이트 -->
+    <update id="updateLikeChecked" parameterType="string">
+        update RECEIVE
+        set LIKE_CHECKED = #{likeChecked}
+        where NO = #{no}
+    </update>
+
+    <!-- 읽음, 안읽음 상태 업데이트 -->
+    <update id="updateReadStatus" parameterType="string">
+        update RECEIVE
+        set READ_STATUS = #{readStatus}
+        where NO = #{no}
+    </update>
+
+    <!-- 삭제 (휴지통으로 이동) -->
+    <update id="updateTrash" parameterType="string">
+        update RECEIVE
+        set TRASH = #{trash}
+        where NO = #{no}
+    </update>
+
+</mapper>

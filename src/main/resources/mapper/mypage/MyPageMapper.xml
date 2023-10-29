@@ -1,0 +1,51 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.example.demo.mypage.MyPageMapper">	<!-- 사용할 Mapper 경로 -->
+	
+	<!-- 회원정보 -->
+    <select id="myPageIndex" parameterType="string" resultType="map"> 
+    	select	id, password, name, tel
+    	from 	member
+    	where 	id = #{id}
+    </select>
+    
+	<!-- 정보 수정 -->
+    <update id="myPageUpdate" parameterType="map"> 
+    	update	member
+		set		password = #{password},
+				name = #{name},
+				tel = #{tel}
+		where	id = #{id}
+    </update>
+    
+	<!-- 탈퇴 -->
+   <delete id="myPageDelete" parameterType="map" statementType="CALLABLE"> 
+      {
+      CALL
+         DECLARE
+         BEGIN
+            
+            delete   from CONTACT
+            where   ID = #{id};
+            
+            delete   from STORAGE
+            where   SEND_ID = #{id};
+            
+            delete   from SEND
+            where   SEND_ID = #{id};
+            
+            delete   from RECEIVE
+            where   RECEIVE_ID = #{id};
+            
+            delete   from MEMBER
+            where   ID = #{id};
+            
+            #{deleteResult, mode=OUT, jdbcType=NUMERIC, javaType=String} := SQL%ROWCOUNT;
+            
+         END
+      }
+   </delete>
+    
+</mapper>
